@@ -48,6 +48,6 @@ public class TestPuzzleTest {
         assertEquals("Puzzle Funny", frame.getTitle());
         
         
-        fail("The test case is a prototype.");
+        //fail("The test case is a prototype.");
     }
 }
