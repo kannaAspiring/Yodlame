@@ -1,35 +1,31 @@
 
 package puzzlebyyodlame;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Toolkit;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.CropImageFilter;
-import java.awt.image.FilteredImageSource;
-import java.util.Random;
-
-import javax.swing.Box;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import java.awt.image.*;
+import java.util.*;
+import javax.swing.*;
 
 
 
 public class PuzzleByyodlame extends JFrame implements ActionListener{
       private Image source;
       private Image image;
+       private Image ranImage;
       private JLabel label;
       private JPanel centerPanel;
       private JButton button;
+      private byte[] imgByte;
       int[][] position;
-      int[]a;
       int width, height;
-      int x;
+      int x,y,z;
+     int temp;
+     int breaking = 0;
+      Random generator = new Random();
+      ArrayList lineOfImg = new ArrayList();
+      ArrayList Check = new ArrayList();
      
     public PuzzleByyodlame(String title){
          this();
@@ -37,27 +33,21 @@ public class PuzzleByyodlame extends JFrame implements ActionListener{
      }
    
     public PuzzleByyodlame(){
+       
            position = new int[][] {
                             {0, 1, 2}, 
                             {3, 4, 5}, 
                             {6, 7, 8},
-                            {9, 10, 11},
-                            
                         };    
         
         centerPanel = new JPanel();
-        centerPanel.setLayout(new GridLayout(4, 4, 0, 0));
+        centerPanel.setLayout(new GridLayout(3, 3, 0, 0));
         Toolkit kit = Toolkit.getDefaultToolkit();
         
         Image img = kit.getImage("Image/puzzle_blue.png");
         setIconImage(img);
-//        
-//        ImageIcon sid = new ImageIcon(kit.getImage("Image/social.jpg"));
-//              source = sid.getImage();
-//              width = sid.getIconWidth();
-//              height = sid.getIconHeight();
 
-        Random generator = new Random();
+        
         x = generator.nextInt(10);
         
         switch(x){
@@ -117,36 +107,69 @@ public class PuzzleByyodlame extends JFrame implements ActionListener{
         add(Box.createRigidArea(new Dimension(0, 5)), BorderLayout.NORTH);    
         add(centerPanel, BorderLayout.CENTER);
        
-        for ( int i = 0; i < 4; i++) {
+       
+        for ( int i = 0; i < 3; i++) {
             for ( int j = 0; j < 3; j++) {
-                if (j == 2 && i == 3){
-                    label = new JLabel("");                    
-                    centerPanel.add(label);
-            }
-               else
-                    {
-                    button = new JButton();
-                    button.addActionListener(this);
-                    centerPanel.add(button);
-                    image = createImage(new FilteredImageSource(source.getSource(),
-                        new CropImageFilter(j*width/3, i*height/4, 
-                            (width/3)+1, height/4)));
-                     button.setIcon(new ImageIcon(image));  
-             }
+  
+                image = createImage(new FilteredImageSource(source.getSource(),
+                        new CropImageFilter(j*width/3, i*height/3, 
+                            (width/3), height/3)));                   
+                    lineOfImg.add(image);
                 } 
-            }  
-    
-        setSize(width,height);//มีการกำหนดขนาด เพราะว่า frame ที่สร้างขึ้น default มันจะมีขนาดเป็นศุนย์ และไม่สามารถมองเห็นได้ 
+            }
+        Check = lineOfImg;
+        System.out.println(Check.size());
+        temp = lineOfImg.size(); 
+        //lineOfImg.add(null); 
+        //System.out.println(lineOfImg.size());
+        z = generator.nextInt(lineOfImg.size());
+        y = lineOfImg.size();
+        
+       
+        RandomPic();
+       
+        setSize(width,height);//มีการกำหนดขนาด เพราะว่า frame ที่สร้างขึ้น default มันจะมีขนาดเป็นศุนย์ และไม่สามารถมองเห็นได้
         setResizable(false);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        
-        //setVisible(true);
-       
+        setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
         
     }
     
-    public void actionPerformed(ActionEvent e) {
+    
+    public void RandomPic(){
+         
+        while(breaking != 999){ 
+           for ( int i = 0; i < 3; i++) {
+            for ( int j = 0; j < 3; j++) {
+                 if(y == lineOfImg.size()) {
+                    label = new JLabel("");
+                    centerPanel.add(label);
+                    lineOfImg.remove(y-1);
+                     temp = temp - 1;
+                    z = generator.nextInt(temp);
+                   }else{
+                    button = new JButton();
+                    button.addActionListener(this);
+                    centerPanel.add(button);
+                    ranImage = (Image)lineOfImg.get(z);
+                    button.setIcon(new ImageIcon(ranImage));
+                    //lineOfImg.add(image); 
+                    lineOfImg.remove(z);
+                    temp = temp - 1;
+                    System.out.println("temp :"+ temp);
+                    
+                    if (temp != 0) {
+                    z = generator.nextInt(temp);
+                    }else{
+                    breaking = 999;
+                    }
+                 }
+                } 
+            }
+        } 
+    }
+
+ public void actionPerformed(ActionEvent e) {
         JButton button = (JButton) e.getSource();
         Dimension size = button.getSize();
 
@@ -200,6 +223,3 @@ public class PuzzleByyodlame extends JFrame implements ActionListener{
         }
     }
 }
-
-
-
