@@ -4,44 +4,146 @@ package puzzlebyyodlame;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.image.*;
 import java.util.*;
 import javax.swing.*;
 
 
 
-public class PuzzleByyodlame extends JFrame implements ActionListener{
-      private Image source;
-      private Image image;
-       private Image ranImage;
-      private JLabel label;
-      private JPanel centerPanel;
-      private JButton button;
-      private byte[] imgByte;
-      int[][] position;
-      int width, height;
-      int x,y,z;
-     int temp;
-     int breaking = 0;
-      Random generator = new Random();
-      ArrayList lineOfImg = new ArrayList();
-      ArrayList Check = new ArrayList();
+public class PuzzleByyodlame extends  JFrame implements ActionListener{
+     private JMenuBar menuBar; 
+     private JMenu fileMenu; 
+     private JMenuItem easy; 
+     private JMenuItem normal;
+     private JMenuItem hard;
+     private JMenuItem exitMenu;    
+     private JLabel display;
+    private Image source;
+    private Image image;
+    private Image ranImage;
+    private JLabel label;
+    private JPanel centerPanel;
+    private JButton button;
+    private byte[] imgByte;
+    int[][] position;
+    int index,level;
+    int width, height;
+    int x,y,z;
+    int temp;
+    int breaking,count = 0;
+  
+    Random generator = new Random();
+    ArrayList lineOfImg = new ArrayList();
+    ArrayList Check = new ArrayList();
      
-    public PuzzleByyodlame(String title){
-         this();
-         setTitle(title);
-     }
+         public PuzzleByyodlame(String title){
+            this();
+            setTitle(title);
+   }
    
     public PuzzleByyodlame(){
-       
-           position = new int[][] {
+           menuBar = new JMenuBar(); 
+     
+           fileMenu = new JMenu("New Game"); 
+           fileMenu.setMnemonic(KeyEvent.VK_F); 
+         
+           easy = new JMenuItem("Easy", KeyEvent.VK_E); 
+           normal = new JMenuItem("Normal",KeyEvent.VK_N);
+           hard = new JMenuItem("Hard",KeyEvent.VK_H);
+           exitMenu = new JMenuItem("Exit",KeyEvent.VK_X); 
+     
+           easy.addActionListener(this); 
+           normal.addActionListener(this);
+           hard.addActionListener(this);
+           exitMenu.addActionListener(this);
+           
+           menuBar.add(fileMenu);            
+           fileMenu.add(easy);
+           fileMenu.add(normal);
+           fileMenu.add(hard);
+           fileMenu.add(exitMenu);
+           
+           setJMenuBar(menuBar);        
+                                
+            position = new int[][] {
                             {0, 1, 2}, 
                             {3, 4, 5}, 
-                            {6, 7, 8},
-                        };    
+                            {6, 7, 8}
+                                   };
+             index = 3;
+             initComponents();
+             System.out.println(index);
+           
+       
+        add(Box.createRigidArea(new Dimension(0, 5)), BorderLayout.NORTH);    
+        add(centerPanel, BorderLayout.CENTER);
+       
+        for ( int i = 0; i < index; i++) {
+            for ( int j = 0; j < index; j++) {
+  
+                image = createImage(new FilteredImageSource(source.getSource(),
+                        new CropImageFilter(j*width/index, i*height/index, 
+                            (width/index), height/index)));                   
+                    lineOfImg.add(image);
+                } 
+            }
+        Check = lineOfImg;
+        System.out.println(Check.get(0));
+        temp = lineOfImg.size(); 
+        //lineOfImg.add(null); 
+        //System.out.println(lineOfImg.size());
+        z = generator.nextInt(lineOfImg.size());
+        y = lineOfImg.size();
         
+       
+        RandomPic();
+       
+        setSize(width,height);
+        setResizable(false);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
+        
+    }
+    
+    
+    public void RandomPic(){
+         
+        while(breaking != 999){ 
+           for ( int i = 0; i < index; i++) {
+            for ( int j = 0; j < index; j++) {
+                 if(y == lineOfImg.size()) {
+                    label = new JLabel("");
+                    centerPanel.add(label);
+                    lineOfImg.remove(y-1);
+                     temp = temp - 1;
+                    z = generator.nextInt(temp);
+                   }else{
+                    button = new JButton();
+                    button.addActionListener(this);
+                    centerPanel.add(button);
+                    ranImage = (Image)lineOfImg.get(z);
+                    button.setIcon(new ImageIcon(ranImage));
+                    //lineOfImg.add(image); 
+                    lineOfImg.remove(z);
+                    temp = temp - 1;
+                   
+                    // System.out.println("temp :"+ temp);
+                    
+                    if (temp != 0) {
+                    z = generator.nextInt(temp);
+                    }else{
+                    breaking = 999;
+                    }
+                 }
+                } 
+            }
+        } 
+    }
+
+    public void initComponents(){
         centerPanel = new JPanel();
-        centerPanel.setLayout(new GridLayout(3, 3, 0, 0));
+        centerPanel.setLayout(new GridLayout(index, index, 0, 0));
         Toolkit kit = Toolkit.getDefaultToolkit();
         
         Image img = kit.getImage("Image/puzzle_blue.png");
@@ -104,72 +206,27 @@ public class PuzzleByyodlame extends JFrame implements ActionListener{
         }
         
         
-        add(Box.createRigidArea(new Dimension(0, 5)), BorderLayout.NORTH);    
-        add(centerPanel, BorderLayout.CENTER);
        
-       
-        for ( int i = 0; i < 3; i++) {
-            for ( int j = 0; j < 3; j++) {
-  
-                image = createImage(new FilteredImageSource(source.getSource(),
-                        new CropImageFilter(j*width/3, i*height/3, 
-                            (width/3), height/3)));                   
-                    lineOfImg.add(image);
-                } 
-            }
-        Check = lineOfImg;
-        System.out.println(Check.size());
-        temp = lineOfImg.size(); 
-        //lineOfImg.add(null); 
-        //System.out.println(lineOfImg.size());
-        z = generator.nextInt(lineOfImg.size());
-        y = lineOfImg.size();
-        
-       
-        RandomPic();
-       
-        setSize(width,height);//มีการกำหนดขนาด เพราะว่า frame ที่สร้างขึ้น default มันจะมีขนาดเป็นศุนย์ และไม่สามารถมองเห็นได้
-        setResizable(false);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
-        
+    
     }
+        
     
     
-    public void RandomPic(){
+     public void actionPerformed(ActionEvent e) {
          
-        while(breaking != 999){ 
-           for ( int i = 0; i < 3; i++) {
-            for ( int j = 0; j < 3; j++) {
-                 if(y == lineOfImg.size()) {
-                    label = new JLabel("");
-                    centerPanel.add(label);
-                    lineOfImg.remove(y-1);
-                     temp = temp - 1;
-                    z = generator.nextInt(temp);
-                   }else{
-                    button = new JButton();
-                    button.addActionListener(this);
-                    centerPanel.add(button);
-                    ranImage = (Image)lineOfImg.get(z);
-                    button.setIcon(new ImageIcon(ranImage));
-                    //lineOfImg.add(image); 
-                    lineOfImg.remove(z);
-                    temp = temp - 1;
-                    System.out.println("temp :"+ temp);
-                    
-                    if (temp != 0) {
-                    z = generator.nextInt(temp);
-                    }else{
-                    breaking = 999;
-                    }
-                 }
-                } 
-            }
-        } 
-    }
-
- public void actionPerformed(ActionEvent e) {
+        Object source = e.getSource();
+        if(source ==easy)
+             System.out.println("Easy");
+        else if(source==normal)
+            System.out.println("Normal");
+        else if(source==hard)
+            System.out.println("Hard");
+        else if(source==exitMenu){
+        int val = JOptionPane.showConfirmDialog(this, "Do you want to exit programe?", "Exit", JOptionPane.OK_CANCEL_OPTION);
+        if(val== JOptionPane.OK_OPTION)
+        System.exit(0);
+}
+         
         JButton button = (JButton) e.getSource();
         Dimension size = button.getSize();
 
@@ -185,21 +242,25 @@ public class PuzzleByyodlame extends JFrame implements ActionListener{
 
         if (labelX == buttonX && (labelY - buttonY) == size.height ) {
 
-             int labelIndex = buttonIndex + 3;
+             int labelIndex = buttonIndex + index;
 
              centerPanel.remove(buttonIndex);
              centerPanel.add(label, buttonIndex);
              centerPanel.add(button,labelIndex);
              centerPanel.validate();
+             count++;
+             System.out.println("Count :  " + count);
         }
 
         if (labelX == buttonX && (labelY - buttonY) == -size.height ) {
 
-             int labelIndex = buttonIndex - 3;
+             int labelIndex = buttonIndex - index;
              centerPanel.remove(labelIndex);
              centerPanel.add(button,labelIndex);
              centerPanel.add(label, buttonIndex);
              centerPanel.validate();
+             count++;
+             System.out.println("Count :  " + count);
         }
 
         if (labelY == buttonY && (labelX - buttonX) == size.width ) {
@@ -210,6 +271,8 @@ public class PuzzleByyodlame extends JFrame implements ActionListener{
              centerPanel.add(label, buttonIndex);
              centerPanel.add(button,labelIndex);
              centerPanel.validate();
+             count++;
+             System.out.println("Count :  " + count);
         }
 
         if (labelY == buttonY && (labelX - buttonX) == -size.width ) {
@@ -220,6 +283,10 @@ public class PuzzleByyodlame extends JFrame implements ActionListener{
              centerPanel.add(label, labelIndex);
              centerPanel.add(button,labelIndex);
              centerPanel.validate();
+             count++;
+             System.out.println("Count :  " + count);
         }
+        
+
     }
 }
