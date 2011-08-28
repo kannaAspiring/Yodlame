@@ -20,7 +20,6 @@ public class PuzzleByyodlame extends  JFrame implements ActionListener{
     private byte[] imgByte;
     int[][] position;
     int index;
-    int level = 1;
     int zero = 0;
     int width, height;
     int x,y,z;
@@ -38,27 +37,17 @@ public class PuzzleByyodlame extends  JFrame implements ActionListener{
    }
    
     public PuzzleByyodlame(){
-       switch(level){
-            case 1 :position = new int[][] { //3*3
+            
+        position = new int[][] { //3*3
                             {0, 1, 2}, 
                             {3, 4, 5}, 
                             {6, 7, 8}
                       };
              index = 3;
-                break;
-            case 2 :position = new int[][] { //4*4
-                            {0, 1, 2, 3}, 
-                            {4, 5, 6, 7}, 
-                            {8, 9, 10, 11},
-                            {12, 13, 14, 15}
-                        };
-            index = 4;
-                break;
-}  
+
         b1 =new JButton("New Game");
         b2 =new JButton("Help me");
-        b3 =new JButton("Reset");
-        
+        b3 =new JButton("Reset");      
         
         lblstatus = new JLabel("Start Game(10000)"); 
         
@@ -120,6 +109,7 @@ public class PuzzleByyodlame extends  JFrame implements ActionListener{
         JOptionPane.showMessageDialog(this, "Please select level for play");
         JOptionPane.showMessageDialog(this, "My default level is Normal");
         JOptionPane.showMessageDialog(this, "Your move is 150 moves");
+        //JOptionPane.showMessageDialog(this,setIconImage(image));
         setSize(800,600);
         setResizable(false);
         setLocationRelativeTo(null);
@@ -239,7 +229,6 @@ public class PuzzleByyodlame extends  JFrame implements ActionListener{
         if(source == b1){
         int val = JOptionPane.showConfirmDialog(this, "Do you want to new game?", "New Game", JOptionPane.OK_CANCEL_OPTION);
             if(val== JOptionPane.OK_OPTION){
-            level = index - 2;
             JOptionPane.showMessageDialog(this, "Your Pic is Changed.");
             new PuzzleByyodlame("Puzzle Funny.");
             }
@@ -296,7 +285,6 @@ public class PuzzleByyodlame extends  JFrame implements ActionListener{
         JOptionPane.showMessageDialog(this,"Congratulation!!");
         int val3 = JOptionPane.showConfirmDialog(this, "Are you want to play again?", "Finish", JOptionPane.OK_CANCEL_OPTION);
             if (val3 == JOptionPane.OK_OPTION) {
-                level = index - 2;
             JOptionPane.showMessageDialog(this, "As you wish.");
             new PuzzleByyodlame("Puzzle Funny");
             }
